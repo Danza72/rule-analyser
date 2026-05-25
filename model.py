@@ -1,21 +1,8 @@
 import requests
 
-url = ("http://localhost:12434/engines/llama.cpp/v1/chat/completions")
 
-
-user_input = []
-
-while True:
-    print("Please enter the rule you wish to analyse: (type 'END' on a new line to finish):")
-    while True:
-        line = input()
-        if line.lower() == "end":
-            break
-        user_input.append(line)
-
-    joined_input = "\n".join(user_input)
-
-
+def analyze_rule(rule_str):
+    url = ("http://localhost:12434/engines/llama.cpp/v1/chat/completions")
     data = {
         "model": "ai/qwen3-coder",
         "messages": [
@@ -25,11 +12,12 @@ while True:
             },
             {
                 "role": "user",
-                "content": f"Analyze this rule:\n\n{joined_input}\n\nExplain to me in detail everything about this rule:"
+                "content": f"Analyze this rule:\n\n{rule_str}\n\n"
+                    "Explain to me in detail everything about this rule:"
             }
         ]
     }
 
     response = requests.post(url, json=data)
     response.raise_for_status()
-    print(response.json()["choices"][0]["message"]["content"])
+    return response.json()["choices"][0]["message"]["content"]
